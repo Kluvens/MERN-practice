@@ -2,10 +2,15 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 const Register = () => {
+    const [name, setName] = useState('');
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const navigate = useNavigate();
     const [error, setError] = useState(null);
+
+    const handleNameChange = (event) => {
+        setName(event.target.value);
+    }
 
     const handleEmailChange = (event) => {
         setEmail(event.target.value);
@@ -23,7 +28,7 @@ const Register = () => {
           headers: {
             "Content-Type": "application/json",
           },
-          body: JSON.stringify({ email, password }),
+          body: JSON.stringify({ name, email, password }),
         });
     
         if (response.status === 200) {
@@ -37,6 +42,10 @@ const Register = () => {
 
     return (
       <form onSubmit={handleSubmit}>
+        <div>
+        <label>Name:</label>
+        <input type="text" value={name} onChange={handleNameChange} />
+      </div>
       <div>
         <label>Email:</label>
         <input type="email" value={email} onChange={handleEmailChange} />

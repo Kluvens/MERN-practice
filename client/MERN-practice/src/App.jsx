@@ -7,6 +7,7 @@ import ShowBookDetails from './components/ShowBookDetails';
 import UpdateBookInfo from './components/UpdateBookInfo';
 import Login from './components/Login/Login';
 import Register from './components/Register/Register';
+import Profile from './components/User/Profile';
 
 const App = () => {
   return (
@@ -19,6 +20,7 @@ const App = () => {
           <Route path='/show-book/:id' element={<ShowBookDetails />} />
           <Route path='/login' element={<Login />} />
           <Route path='/Register' element={<Register />} />
+          <Route path='/Profile' element={<Profile />} />
         </Routes>
       </div>
     </Router>
