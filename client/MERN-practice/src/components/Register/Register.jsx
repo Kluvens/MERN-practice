@@ -32,7 +32,7 @@ const Register = () => {
         });
     
         if (response.status === 200) {
-          const { user, account_type } = await response.json();
+          const { message, user } = await response.json();
           navigate(`/profile/${user}`);
         } else {
           const { message } = await response.json();

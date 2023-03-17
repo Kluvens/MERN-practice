@@ -18,7 +18,7 @@ const Login = () => {
     const handleSubmit = async (event) => {
         event.preventDefault();
 
-        const response = await fetch("http://localhost:5001/api/users/login", {
+        const response = await fetch("http://localhost:8082/api/users/login", {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
@@ -28,7 +28,7 @@ const Login = () => {
     
         if (response.status === 200) {
           const { user, account_type } = await response.json();
-          navigate(`/profile/${account_type}/${user}`);
+          navigate(`/profile/${user.id}`);
         } else {
           const { message } = await response.json();
           setError(message);

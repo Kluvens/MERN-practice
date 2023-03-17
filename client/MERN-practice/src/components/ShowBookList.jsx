@@ -25,6 +25,9 @@ function ShowBookList() {
 
   return (
     <div className='ShowBookList'>
+      <Link to='/profile'>
+      <button>Profile</button>
+      </Link>
       <div className='container'>
         <div className='row'>
           <div className='col-md-12'>

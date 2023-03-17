@@ -9,7 +9,6 @@ const jwt = require('jsonwebtoken');
 
 
 const bcrypt = require('bcryptjs');
-const salt = bcrypt.genSaltSync(10);
 
 // Login route
 router.post('/login', async (req, res) => {
@@ -38,6 +37,25 @@ router.post('/login', async (req, res) => {
     res.status(500).json({ message: 'Server error' });
   }
 });
+
+router.get('/:id', async (req, res) => {
+  try {
+    // Find user by ID in database
+    const user = await User.findById(req.params.id);
+
+    // If user not found, return error response
+    if (!user) {
+      return res.status(404).json({ message: 'User not found' });
+    }
+
+    // Return user data
+    res.json({ id: user.id, name: user.name, email: user.email });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: 'Server error' });
+  }
+});
+
 
 // Register user
 router.post('/register', async (req, res) => {
@@ -81,31 +99,33 @@ router.post('/register', async (req, res) => {
 
 const authMiddleware = async (req, res, next) => {
   try {
-    // Get token from request headers
-    const token = req.headers.authorization.split(' ')[1];
-
-    // Verify token and extract user ID
-    const decoded = jwt.verify(token, process.env.JWT_SECRET);
-    const userId = decoded.userId;
-
-    // Fetch user from database
-    const user = await User.findById(userId);
-
-    if (!user) {
-      throw new Error('User not found');
+    const token = req.headers.authorization.split(" ")[1];
+    if (!token) {
+      return res.redirect("/login");
     }
-
-    // Add user object to request for future use
+    const decodedToken = jwt.verify(token, process.env.JWT_SECRET);
+    const userId = decodedToken.userId;
+    const user = await User.findById(userId);
+    if (!user) {
+      return res.redirect("/login");
+    }
     req.user = user;
-
     next();
-  } catch (error) {
-    res.status(401).json({ message: 'Authentication failed' });
+  } catch (err) {
+    return res.redirect("/login");
   }
 };
 
-router.get('/profile', authMiddleware, (req, res) => {
-  // Route logic here
+router.get("/profile", authMiddleware, async (req, res) => {
+  try {
+    const user = req.user;
+    res.json({ name: user.name, email: user.email });
+  } catch (err) {
+    console.log(err);
+    res.status(500).json({ message: "Internal server error" });
+  }
 });
+
+
 
 module.exports = router;
