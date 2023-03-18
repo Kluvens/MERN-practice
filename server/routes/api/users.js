@@ -9,6 +9,7 @@ const jwt = require('jsonwebtoken');
 
 
 const bcrypt = require('bcryptjs');
+const Cart = require('../../models/Cart');
 
 // Login route
 router.post('/login', async (req, res) => {
@@ -126,6 +127,127 @@ router.get("/profile", authMiddleware, async (req, res) => {
   }
 });
 
+router.get('/cart/:id', async (req, res) => {
+  try {
+    const cart = await Cart.findOne({ user: req.params.id }).populate('user', ['name', 'email']);
+
+    if (!cart) {
+      return res.status(404).json({ msg: 'Cart not found' });
+    }
+
+    res.status(200).json({items: cart.items, total: cart.total});
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: 'Server error' });
+  }
+});
+
+router.post('/addToCart', async (req, res) => {
+  try {
+    const { userId, itemName, itemDescription, itemPrice } = req.body;
+
+    let cart = await Cart.findOne({user: userId});
+
+    if (!cart) {
+      cart = new Cart({ user: userId, items: [] });
+    }
+
+    const index = cart.items.findIndex((item) => item.name === itemName);
+
+    if (index !== -1) {
+      cart.items[index].quantity += 1;
+    } else {
+      cart.items.push({
+        name: itemName,
+        description: itemDescription,
+        price: itemPrice,
+        quantity: 1,
+      });
+    }
+
+    cart.total = cart.items.reduce(
+      (total, item) => total + item.price * item.quantity,
+      0
+    );
+
+    await cart.save();
+
+    res.status(200).json({items: cart.items, total: cart.total});
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: 'Server error' });
+  }
+})
+
+router.post('/removeFromCart', async (req, res) => {
+  try {
+    const { userId, itemName, itemDescription, itemPrice } = req.body;
+
+    let cart = await Cart.findOne({user: userId});
+
+    if (!cart) {
+      cart = new Cart({ user: userId, items: [] });
+    }
+
+    const index = cart.items.findIndex((item) => item.name === itemName);
+
+    if (index !== -1) {
+      cart.items[index].quantity -= 1;
+    } else {
+      cart.items.push({
+        id: itemId,
+        name: itemName,
+        description: itemDescription,
+        price: itemPrice,
+        quantity: 1,
+      });
+    }
+
+    cart.total = cart.items.reduce(
+      (total, item) => total + item.price * item.quantity,
+      0
+    );
+
+    await cart.save();
+
+    res.status(200).json({items: cart.items, total: cart.total});
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: 'Server error' });
+  }
+})
+
+router.delete('/deleteFromCart', async (req, res) => {
+  try {
+    const { userId, itemName } = req.body;
+
+    const cart = await Cart.findOne({ user: userId });
+
+    if (!cart) {
+      return res.status(400).json({ error: 'Cart not found' });
+    }
+
+    const index = cart.items.findIndex((item) => item.name === itemName);
+
+    if (index === -1) {
+      return res.status(400).json({ error: 'Item not found in cart' });
+    }
+
+    cart.items.splice(index, 1);
+
+    cart.total = cart.items.reduce(
+      (total, item) => total + item.price * item.quantity,
+      0
+    );
+
+    await cart.save();
+
+    res.status(200).json({ items: cart.items, total: cart.total });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'Server error' });
+  }
+});
 
 
 module.exports = router;

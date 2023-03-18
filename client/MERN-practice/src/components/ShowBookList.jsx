@@ -1,57 +1,81 @@
-import React, { useState, useEffect } from 'react';
-import '../App.css';
-import axios from 'axios';
-import { Link } from 'react-router-dom';
-import BookCard from './BookCard';
+import React from 'react';
+import { useNavigate } from 'react-router-dom';
+import Product from './Products/Product';
+import Items from './Products/Products';
 
-function ShowBookList() {
-  const [books, setBooks] = useState([]);
+const Home = () => {
+  const navigate = useNavigate();
 
-  useEffect(() => {
-    axios
-      .get('http://localhost:8082/api/books')
-      .then((res) => {
-        setBooks(res.data);
-      })
-      .catch((err) => {
-        console.log('Error from ShowBookList');
-      });
-  }, []);
+  const handleProfileClick = () => {
+    const token = localStorage.getItem('token');
+    const userId = localStorage.getItem('userId');
+    
+    if (!token || !userId) {
+      navigate('/login');
+      return;
+    }
+    
+    try {
+      const decodedToken = JSON.parse(atob(token.split('.')[1]));
+      const expirationTime = decodedToken.exp * 1000; // Convert expiration time to milliseconds
+      const currentTime = Date.now();
+      
+      if (expirationTime < currentTime) {
+        localStorage.removeItem('token');
+        localStorage.removeItem('userId');
+        navigate('/login');
+        return;
+      }
+      
+      navigate(`/profile/${userId}`);
+      
+    } catch (error) {
+      console.error('Error parsing token:', error);
+      navigate('/login');
+    }
+  }
 
-  const bookList =
-    books.length === 0
-      ? 'there is no book record!'
-      : books.map((book, k) => <BookCard book={book} key={k} />);
+  const handleCartOnclick = () => {
+    const token = localStorage.getItem('token');
+    const userId = localStorage.getItem('userId');
+    
+    if (!token || !userId) {
+      navigate('/login');
+      return;
+    }
+
+    try {
+      const decodedToken = JSON.parse(atob(token.split('.')[1]));
+      const expirationTime = decodedToken.exp * 1000; // Convert expiration time to milliseconds
+      const currentTime = Date.now();
+      
+      if (expirationTime < currentTime) {
+        localStorage.removeItem('token');
+        localStorage.removeItem('userId');
+        navigate('/login');
+        return;
+      }
+      
+      navigate(`/cart/${userId}`);
+      
+    } catch (error) {
+      console.error('Error parsing token:', error);
+      navigate('/login');
+    }
+  }
 
   return (
-    <div className='ShowBookList'>
-      <Link to='/profile'>
-      <button>Profile</button>
-      </Link>
-      <div className='container'>
-        <div className='row'>
-          <div className='col-md-12'>
-            <br />
-            <h2 className='display-4 text-center'>Books List</h2>
-          </div>
-
-          <div className='col-md-11'>
-            <Link
-              to='/create-book'
-              className='btn btn-outline-warning float-right'
-            >
-              + Add New Book
-            </Link>
-            <br />
-            <br />
-            <hr />
-          </div>
-        </div>
-
-        <div className='list'>{bookList}</div>
+    <div>
+      <h1>Welcome to the home page!</h1>
+      <button onClick={handleProfileClick}>Profile</button>
+      <button onClick={handleCartOnclick}>Cart</button>
+      <div>
+      {Items.map((product) => (
+        <Product key={product.id} product={product} />
+      ))}
       </div>
     </div>
-  );
+  )
 }
 
-export default ShowBookList;
+export default Home;
