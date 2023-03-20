@@ -26,7 +26,7 @@ const App = () => {
           <Route path='/edit-book/:id' element={<UpdateBookInfo />} />
           <Route path='/show-book/:id' element={<ShowBookDetails />} />
           <Route path='/login' element={<Login />} />
-          <Route path='/Register' element={<Register />} />
+          <Route path='/register' element={<Register />} />
           <Route path="/profile/:id" element={<Profile isUserAuthenticated={isUserAuthenticated} />} />
           <Route path="/cart/:id" element={<Cart isUserAuthenticated={isUserAuthenticated} />} />
         </Routes>

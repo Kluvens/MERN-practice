@@ -1,7 +1,8 @@
 import React from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import Product from './Products/Product';
 import Items from './Products/Products';
+import {FaSignInAlt, FaSignOutAlt, FaUser} from 'react-icons/fa';
 
 const Home = () => {
   const navigate = useNavigate();
@@ -69,6 +70,11 @@ const Home = () => {
       <h1>Welcome to the home page!</h1>
       <button onClick={handleProfileClick}>Profile</button>
       <button onClick={handleCartOnclick}>Cart</button>
+      <div>
+        <Link to='/login'>
+          <FaSignInAlt /> Login
+        </Link>
+      </div>
       <div>
       {Items.map((product) => (
         <Product key={product.id} product={product} />
