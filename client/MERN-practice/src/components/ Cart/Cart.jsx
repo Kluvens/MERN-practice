@@ -121,23 +121,31 @@ const Cart = () => {
 
   return (
     <div>
-        <h1>Welcome to my cart</h1>
-        {cartItems.map((item) => (
-          <div key={item.name}>
-            <div>{item.name}</div>
-            <div>{item.description}</div>
-            <div>{item.price}</div>
-            <div>Quantity: {item.quantity}</div>
-            <button onClick={() => handleIncrement(item)}>+</button>
-            <button onClick={() => handleDecrement(item)}>-</button>
-            <button onClick={() => handleDelete(item)}>Delete</button>
+      <h1>Welcome to my cart</h1>
+      {cartItems.length > 0 ? (
+        <>
+          {cartItems.map((item) => (
+            <div key={item.name}>
+              <div>{item.name}</div>
+              <div>{item.description}</div>
+              <div>{item.price}</div>
+              <div>Quantity: {item.quantity}</div>
+              <button onClick={() => handleIncrement(item)}>+</button>
+              <button onClick={() => handleDecrement(item)}>-</button>
+              <button onClick={() => handleDelete(item)}>Delete</button>
+            </div>
+          ))}
+          <div>
+            Total price: {total}
           </div>
-        ))}
+        </>
+      ) : (
         <div>
-          Total price: {total}
+          <p>Your cart is empty. Start shopping!</p>
         </div>
+      )}
     </div>
-  )
+  );
 }
 
 export default Cart;

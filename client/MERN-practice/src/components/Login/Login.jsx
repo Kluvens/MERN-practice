@@ -8,16 +8,18 @@ const Login = () => {
   const [error, setError] = useState('');
 
   const handleEmailChange = (event) => {
+    setError('');
     setEmail(event.target.value);
   }
 
   const handlePasswordChange = (event) => {
+    setError('');
     setPassword(event.target.value);
   }
 
   const handleSubmit = async (event) => {
     event.preventDefault();
-
+  
     try {
       const response = await fetch("http://localhost:8082/api/users/login", {
         method: "POST",
@@ -26,7 +28,7 @@ const Login = () => {
         },
         body: JSON.stringify({ email, password }),
       });
-
+  
       if (response.status === 200) {
         const { user, token } = await response.json();
         localStorage.setItem('token', token); // Save JWT token to local storage
@@ -51,7 +53,7 @@ const Login = () => {
         <label>Password:</label>
         <input type="password" value={password} onChange={handlePasswordChange} />
       </div>
-      <div style={{ color: 'red' }}>{error}</div>
+      {error && <div style={{ color: 'red' }}>{error}</div>} {/* display error message in red */}
       <button type="submit">Login</button>
     </form>
   )

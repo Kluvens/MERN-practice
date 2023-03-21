@@ -41,8 +41,12 @@ const Register = () => {
           });
       
           if (response.status === 200) {
-            const { message, user } = await response.json();
-            navigate(`/profile/${user}`);
+            const { message, userId, token } = await response.json();
+            localStorage.removeItem('token');
+            localStorage.removeItem('userId');
+            localStorage.setItem('token', token); // Save JWT token to local storage
+            localStorage.setItem('userId', userId);
+            navigate(`/profile/${userId}`);
           } else {
             const { message } = await response.json();
             setError(message);

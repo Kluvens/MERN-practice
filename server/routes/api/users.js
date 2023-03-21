@@ -88,9 +88,20 @@ router.post('/register', async (req, res) => {
     // Save user to database
     const savedUser = await newUser.save();
 
+    const user = await User.findOne({ email });
+
+    // Generate JWT token
+    const token = jwt.sign({ userId: user.id }, process.env.JWT_SECRET);
+
+    // create cart
+    const cart = new Cart({ user: user.id, items: [], total: 0 });
+
+    await cart.save();
+
     res.status(200).json({
       message: 'User registered successfully',
-      user: savedUser._id,
+      userId: user.id,
+      token: token,
     });
   } catch (error) {
     console.error(error);
