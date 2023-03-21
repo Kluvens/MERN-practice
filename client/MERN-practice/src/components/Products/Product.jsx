@@ -1,4 +1,5 @@
 import { Link, useParams } from "react-router-dom";
+import {FaCartPlus} from 'react-icons/fa';
 
 function Product(props) {
     const { id, name, category, price, description } = props.product;
@@ -48,7 +49,9 @@ function Product(props) {
         <h3 className="label">{name}</h3>
         <p className="label">Category: {category}</p>
         <button className="inquriy" onClick={addToCart}>
-          Add to Cart
+          <Link>
+            <FaCartPlus/> Add to Cart
+          </Link>
         </button>
       </div>
     );

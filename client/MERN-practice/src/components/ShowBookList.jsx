@@ -2,7 +2,7 @@ import React from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import Product from './Products/Product';
 import Items from './Products/Products';
-import {FaSignInAlt, FaSignOutAlt, FaUser} from 'react-icons/fa';
+import {FaSignInAlt, FaSignOutAlt, FaUser, FaShoppingCart} from 'react-icons/fa';
 
 const Home = () => {
   const navigate = useNavigate();
@@ -69,7 +69,11 @@ const Home = () => {
     <div>
       <h1>Welcome to the home page!</h1>
       <button onClick={handleProfileClick}>Profile</button>
-      <button onClick={handleCartOnclick}>Cart</button>
+      <button onClick={handleCartOnclick}>
+        <Link>
+          <FaShoppingCart/> Cart
+        </Link>
+      </button>
       <div>
         <Link to='/login'>
           <FaSignInAlt /> Login
